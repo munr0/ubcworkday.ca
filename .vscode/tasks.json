@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Live preview",
+      "detail": "Serve the site on localhost:8000 and reload the browser on save",
+      "type": "shell",
+      "command": "npx --yes five-server@0.5.0 --port=8000",
+      "isBackground": true,
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}
