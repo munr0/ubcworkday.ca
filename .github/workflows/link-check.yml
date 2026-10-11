@@ -1,0 +1,58 @@
+name: Link check
+
+# Runs weekly and on every change to the page. If any link is dead (including
+# ubcworkday.ca itself), it opens (or updates) a single "stale-links" issue.
+on:
+  schedule:
+    - cron: "0 15 * * 1"
+  push:
+    branches: [master]
+    paths: [index.html, icons/**, lychee.toml, .github/workflows/link-check.yml]
+  pull_request:
+    paths: [index.html, icons/**, lychee.toml, .github/workflows/link-check.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  lychee:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check links
+        id: lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --no-progress index.html
+          fail: false
+
+      - name: Open or update stale-links issue
+        if: steps.lychee.outputs.exit_code != 0 && github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create stale-links --color B60205 --description "A link on ubcworkday.ca is broken" --force
+          existing=$(gh issue list --label stale-links --state open --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file ./lychee/out.md
+          else
+            gh issue create --title "Broken links on ubcworkday.ca" --label stale-links --body-file ./lychee/out.md
+          fi
+
+      - name: Close stale-links issue once links pass
+        if: steps.lychee.outputs.exit_code == 0 && github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          existing=$(gh issue list --label stale-links --state open --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue close "$existing" --comment "All links pass again."
+          fi
+
+      - name: Fail on broken links
+        if: steps.lychee.outputs.exit_code != 0
+        run: exit 1
