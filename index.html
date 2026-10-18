@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>UBC Workday Login | UBC Canvas | ubcworkday.ca</title>
+    <title>UBC Workday Login, UBC Canvas, Student Tools </title>
     <meta name="description" content="Quick links to UBC Workday, Canvas, transcripts, printing, and other tools for UBC students.">
     <link rel="canonical" href="https://ubcworkday.ca/">
     <meta name="theme-color" content="#0055B7">
@@ -22,6 +22,28 @@
     <link rel="stylesheet" href="styles.css">
     <base target="_blank">
 
+    <meta name="apple-mobile-web-app-title" content="UBC Portal">
+
+    <script>
+      // SEO <title> for crawlers, short tab name for users
+      (function () {
+        var events = ["pointerdown", "pointermove", "keydown", "touchstart", "scroll"];
+        function rename() {
+          document.title = "UBC Portal";
+          events.forEach(function (e) {
+            removeEventListener(e, rename, true);
+          });
+          document.removeEventListener("visibilitychange", rename);
+        }
+        events.forEach(function (e) {
+          addEventListener(e, rename, {
+            capture: true,
+            passive: true
+          });
+        });
+        document.addEventListener("visibilitychange", rename);
+      })();
+    </script>
     <script data-goatcounter="https://ubcworkday.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
   </head>
   <body>
