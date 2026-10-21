@@ -6,3 +6,6 @@ timeout = 30
 
 # 403/429 are bot-blocking or rate limits, not dead links.
 accept = ["200..=299", "403", "429"]
+
+# As of 2026-10-20, Pay For Print is VPN-only.
+exclude = ['^https://payforprint\.ubc\.ca']
